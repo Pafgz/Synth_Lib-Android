@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SynthLibTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    HomeScreen()
+                    MainScreen()
                 }
             }
         }
