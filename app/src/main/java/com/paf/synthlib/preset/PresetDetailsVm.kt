@@ -17,7 +17,7 @@ class PresetDetailsVm: ViewModel() {
 
     var preset: Preset? by mutableStateOf(null)
 
-    var imageList = mutableListOf<Uri>()
+    var imageList = mutableListOf<Image>()
 
     fun init(inputPreset: Preset?) {
         preset = inputPreset ?: getNewPreset()
@@ -30,11 +30,13 @@ class PresetDetailsVm: ViewModel() {
     }
 
     fun addNewPicture(imageUri: Uri) {
-        imageList.add(imageUri)
+        imageList.add(Image(imageUri))
     }
 
     fun addNewPictures(uriList: List<Uri>) {
-        imageList.addAll(uriList)
+        imageList.addAll(
+            uriList.map { Image(it) }
+        )
     }
 
     private fun getNewPreset() = Preset(
@@ -42,5 +44,10 @@ class PresetDetailsVm: ViewModel() {
         name = "Preset" + Random.nextInt(999999999),
         hasDemo = false,
         tagList = listOf()
+    )
+
+    data class Image(
+        val uri: Uri,
+        val isSaved: Boolean = false
     )
 }
