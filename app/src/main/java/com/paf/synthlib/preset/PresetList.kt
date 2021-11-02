@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paf.synthlib.R
 import com.paf.synthlib.domain.Preset
 import com.paf.synthlib.ui.theme.LightGrey
+import com.paf.synthlib.ui.theme.Orange
 import com.paf.synthlib.ui.theme.SynthLibTheme
 import com.paf.synthlib.utils.PreviewData.PresetPreviewData
 
@@ -70,9 +73,7 @@ fun PresetListEmptyView(modifier: Modifier = Modifier.fillMaxSize(), onClick: ()
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text("No Preset", modifier = Modifier.padding(16.dp), fontSize = 24.sp, color = Color.White)
 
-        AddButton(modifier = Modifier
-            .size(250.dp)
-            .padding(16.dp), onClick)
+        AddButton(onClick = onClick)
     }
 }
 
@@ -85,17 +86,17 @@ private fun PresetListEmptyPreview() {
 }
 
 @Composable
-fun AddButton(modifier: Modifier = Modifier.size(250.dp), onClick: () -> Unit) {
+fun AddButton(modifier: Modifier = Modifier.size(230.dp), shape: Shape = RoundedCornerShape(16.dp), backgroundColor: Color = LightGrey, foregroundColor: Color = Color.White, onClick: () -> Unit) {
     Box(
         modifier = modifier
-            .clip(shape = RoundedCornerShape(16.dp))
-            .background(color = LightGrey)
+            .clip(shape = shape)
+            .background(color = backgroundColor)
             .clickable { onClick() }
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_add),
             contentDescription = null,
-            tint = Color.White,
+            tint = foregroundColor,
             modifier = modifier.fillMaxSize()
         )
     }
@@ -106,5 +107,18 @@ fun AddButton(modifier: Modifier = Modifier.size(250.dp), onClick: () -> Unit) {
 private fun AddButtonPreview() {
     SynthLibTheme {
         AddButton {}
+    }
+}
+
+@Preview
+@Composable
+private fun AddButtonSmallCirclePreview() {
+    SynthLibTheme {
+        AddButton(
+            modifier = Modifier
+                .size(32.dp),
+            shape = CircleShape,
+            backgroundColor = Orange
+        ) {}
     }
 }

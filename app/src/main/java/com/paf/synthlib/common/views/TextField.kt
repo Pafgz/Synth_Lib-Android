@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paf.synthlib.ui.theme.DarkBrown
 import com.paf.synthlib.ui.theme.LightGrey
+import com.paf.synthlib.ui.theme.SynthLibTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -105,7 +106,9 @@ fun AppTextField(
 @Preview(showBackground = true)
 @Composable
 fun TextFieldPreview() {
-    AppTextField(value = "Pif Paf", hint = "First Name") {}
+    SynthLibTheme() {
+        AppTextField(value = "Pif Paf", hint = "First Name") {}
+    }
 }
 
 @ExperimentalComposeUiApi

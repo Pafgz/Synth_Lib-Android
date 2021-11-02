@@ -49,13 +49,13 @@ fun AppButton(
     onClick: () -> Unit
 ) {
     Button(
-        modifier = modifier.height(48.dp),
+        modifier = modifier.height(50.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = backgroundColor,
             contentColor = foregroundColor,
             disabledBackgroundColor = backgroundColor.copy(alpha = ContentAlpha.disabled)
         ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(10.dp),
         onClick = onClick,
         enabled = isEnabled
     ) {
