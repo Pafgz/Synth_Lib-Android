@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paf.synthlib.R
-import com.paf.synthlib.domain.Preset
+import com.paf.synthlib.domain.preset.model.Preset
 import com.paf.synthlib.ui.theme.LightGrey
 import com.paf.synthlib.ui.theme.Orange
 import com.paf.synthlib.ui.theme.SynthLibTheme

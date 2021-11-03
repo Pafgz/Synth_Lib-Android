@@ -1,10 +1,10 @@
-package com.paf.synthlib.domain
+package com.paf.synthlib.domain.preset.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Tag(
-    val id: String,
+    val id: Int,
     val name: String
 ): Parcelable

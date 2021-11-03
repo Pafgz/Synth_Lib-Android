@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paf.synthlib.R
 import com.paf.synthlib.common.views.ClickableIcon
-import com.paf.synthlib.domain.Preset
+import com.paf.synthlib.domain.preset.model.Preset
 import com.paf.synthlib.ui.theme.SynthLibTheme
 import com.paf.synthlib.utils.PreviewData.PresetPreviewData
 

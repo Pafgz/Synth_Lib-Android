@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             SynthLibTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {

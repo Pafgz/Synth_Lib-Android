@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.paf.synthlib.common.views.ClickableIcon
-import com.paf.synthlib.domain.Preset
+import com.paf.synthlib.domain.preset.model.Preset
 import com.paf.synthlib.preset.PresetListScreen
 import com.paf.synthlib.ui.theme.SynthLibTheme
 

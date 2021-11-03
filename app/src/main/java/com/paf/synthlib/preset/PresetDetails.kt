@@ -30,7 +30,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.paf.synthlib.camera.CameraCapture
 import com.paf.synthlib.common.views.AppButton
 import com.paf.synthlib.common.views.AppTextField
-import com.paf.synthlib.domain.Preset
+import com.paf.synthlib.common.views.clickableArea
+import com.paf.synthlib.domain.preset.model.Preset
 import com.paf.synthlib.gallery.GallerySelect
 import com.paf.synthlib.ui.theme.LightGrey
 import com.paf.synthlib.ui.theme.Orange
@@ -38,10 +39,11 @@ import com.paf.synthlib.ui.theme.SynthLibTheme
 import com.paf.synthlib.utils.PreviewData.PresetPreviewData
 import kotlinx.coroutines.launch
 
+@ExperimentalCoilApi
 @ExperimentalPermissionsApi
 @ExperimentalMaterialApi
 @Composable
-fun PresetDetailsScreen(preset: Preset?, onClickImage: (Uri) -> Unit, onClickCamera: () -> Unit) {
+fun PresetDetailsScreen(preset: Preset?) {
 
     val vm: PresetDetailsVm = viewModel()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -53,7 +55,7 @@ fun PresetDetailsScreen(preset: Preset?, onClickImage: (Uri) -> Unit, onClickCam
     }
 
     Crossfade(screenState) {
-        when(it) {
+        when (it) {
             PresetScreenState.Details -> ModalBottomSheetLayout(
                 sheetState = sheetState,
                 sheetContent = {
@@ -69,16 +71,19 @@ fun PresetDetailsScreen(preset: Preset?, onClickImage: (Uri) -> Unit, onClickCam
                             screenState = PresetScreenState.Camera
                         }
                     })
-                }) {
+                }
+            ) {
                 vm.apply {
                     this.preset?.let { preset ->
                         PresetDetailsView(
                             preset = preset,
-                            imageList = vm.imageList,
+                            imageList = vm.imageList.map { image -> image.uri },
+                            hasChanges = vm.hasChanges,
                             onNameChange = ::updatePresetName,
                             onClickAddImage = { coroutineScope.launch { sheetState.show() } },
-                            onClickImage = onClickImage,
-                            onClickAddDemo = {}
+                            onClickImage = { },
+                            onClickAddDemo = {},
+                            onSave = ::save
                         )
                     }
                 }
@@ -101,65 +106,92 @@ fun PresetDetailsScreen(preset: Preset?, onClickImage: (Uri) -> Unit, onClickCam
 fun PresetDetailsView(
     preset: Preset,
     imageList: List<Uri>,
+    hasChanges: Boolean,
     onNameChange: (String) -> Unit,
     onClickAddImage: () -> Unit,
     onClickImage: (Uri) -> Unit,
-    onClickAddDemo: () -> Unit
+    onClickAddDemo: () -> Unit,
+    onSave: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, ) {
-        AppTextField(
-            value = preset.name,
-            onTextChanged = onNameChange,
-            modifier = Modifier.padding(16.dp),
-            textStyle = TextStyle(
-                color = Color.White,
-                fontSize = 30.sp,
-                textDecoration = TextDecoration.None,
-                textAlign = TextAlign.Center
-            ),
-            showUnderline = false
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (imageList.isEmpty()) {
-            AddButton(
-                onClick = onClickAddImage
-            )
-        } else {
-            ImageListView(imageList = imageList, onClickImage = onClickImage)
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        AppButton(
-            modifier = Modifier.width(230.dp),
-            text = "Add a picture",
-            onClick = onClickAddImage,
-        )
-
-        Spacer(Modifier.height(36.dp))
-
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Text(
-                "Sound Demos",
-                color = Color.White,
-                fontSize = 26.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                AddButton(
-                    modifier = Modifier
-                        .size(32.dp),
-                    shape = CircleShape, backgroundColor = Orange
-                ) { onClickAddDemo() }
-
-                Spacer(Modifier.width(16.dp))
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.height(46.dp).fillMaxWidth()
+        ) {
+            if (hasChanges) {
+                Spacer(Modifier.weight(1f))
+                Text(
+                    "Save",
+                    modifier = Modifier.clickableArea(
+                        clickAreaShape = RoundedCornerShape(4.dp),
+                        clickAreaSize = 8.dp
+                    ) { onSave() },
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+                Spacer(Modifier.size(16.dp))
             }
         }
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AppTextField(
+                value = preset.name,
+                onTextChanged = onNameChange,
+                modifier = Modifier.padding(16.dp),
+                textStyle = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    textDecoration = TextDecoration.None,
+                    textAlign = TextAlign.Center
+                ),
+                showUnderline = false
+            )
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (imageList.isEmpty()) {
+                AddButton(
+                    onClick = onClickAddImage
+                )
+            } else {
+                ImageListView(imageList = imageList, onClickImage = onClickImage)
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            AppButton(
+                modifier = Modifier.width(230.dp),
+                text = "Add a picture",
+                onClick = onClickAddImage,
+            )
+
+            Spacer(Modifier.height(36.dp))
+
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    "Sound Demos",
+                    color = Color.White,
+                    fontSize = 26.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                    AddButton(
+                        modifier = Modifier
+                            .size(32.dp),
+                        shape = CircleShape, backgroundColor = Orange
+                    ) { onClickAddDemo() }
+
+                    Spacer(Modifier.width(16.dp))
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+        }
     }
 }
 
@@ -171,9 +203,11 @@ private fun PresetDetailsNoImagePreview() {
             preset = PresetPreviewData.preset1,
             onNameChange = {},
             imageList = listOf(),
+            hasChanges = false,
             onClickAddImage = {},
             onClickImage = {},
-            onClickAddDemo = {}
+            onClickAddDemo = {},
+            onSave = {}
         )
     }
 }
@@ -185,10 +219,13 @@ private fun PresetDetailsWithImagePreview() {
         PresetDetailsView(
             preset = PresetPreviewData.preset2,
             imageList = listOf(),
+            hasChanges = true,
             onNameChange = {},
             onClickAddImage = {},
             onClickImage = {},
-            onClickAddDemo = {})
+            onClickAddDemo = {},
+            onSave = {}
+        )
     }
 }
 
@@ -269,5 +306,6 @@ fun PictureSelectionOptionsPreview() {
 private enum class PresetScreenState {
     Details,
     Camera,
-    Gallery
+    Gallery,
+    FullScreenImage
 }
