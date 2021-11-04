@@ -12,8 +12,6 @@ class PresetInteractorImpl(private val presetRepository: PresetRepository): Pres
         var id: Long
         presetRepository.apply {
             id = createNewPreset(preset)
-            saveImagesToLocalStorage(preset.id, images)
-            deleteImages(preset.id, listOf())
         }
         return id
     }
@@ -30,4 +28,18 @@ class PresetInteractorImpl(private val presetRepository: PresetRepository): Pres
     override suspend fun getPreset(id: Long): Flow<Preset> = presetRepository.getPreset(id)
 
     override suspend fun deletePreset(preset: Preset) = presetRepository.deletePreset(preset)
+
+    override suspend fun saveImagesToLocalStorage(presetId: Long, imageList: List<Uri>) {
+        imageList.forEach {
+            saveImageToLocalStorage(presetId, it)
+        }
+    }
+
+    override suspend fun saveImageToLocalStorage(presetId: Long, image: Uri) {
+        presetRepository.saveImageToLocalStorage(presetId, image)
+    }
+
+    override suspend fun deleteImages(presetId: Long, imageList: List<Uri>) {
+        TODO("Not yet implemented")
+    }
 }

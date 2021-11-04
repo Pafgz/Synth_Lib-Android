@@ -7,6 +7,7 @@ import com.paf.synthlib.implementation.database.preset.PresetDao
 import com.paf.synthlib.implementation.database.preset.model.asEntity
 import com.paf.synthlib.implementation.database.preset.model.asModel
 import com.paf.synthlib.utils.FileManager
+import com.paf.synthlib.utils.getBitmap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -39,14 +40,12 @@ class PresetRepositoryImpl(
     override suspend fun deletePreset(preset: Preset) =
         withContext(defaultDispatcher) { presetDao.deletePreset(preset.id) }
 
-    override suspend fun saveImagesToLocalStorage(presetId: Long, imageList: List<Uri>) =
+    override suspend fun saveImageToLocalStorage(presetId: Long, image: Uri): Unit =
         withContext(defaultDispatcher) {
-            imageList.forEach {
-                fileManager.saveImage(PresetFolderName + "_$presetId", it)
-            }
+            fileManager.saveImage(PresetFolderName + "_$presetId", image)
         }
 
-    override suspend fun deleteImages(presetId: Long, imageList: List<Uri>) =
+    override suspend fun deleteImages(presetId: Long, image: Uri) =
         withContext(defaultDispatcher) {
 
         }

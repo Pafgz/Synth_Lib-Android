@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.io.File
 import kotlin.random.Random
 
 class PresetDetailsVm : ViewModel(), KoinComponent {
@@ -67,14 +66,26 @@ class PresetDetailsVm : ViewModel(), KoinComponent {
 
     fun addNewPicture(imageUri: Uri) {
         imageList.add(ImageWrapper(imageUri))
-        hasChanges = true
+        viewModelScope.launch {
+            preset?.id?.let { id ->
+                isLoading = true
+                presetInteractor.saveImageToLocalStorage(id, imageUri)
+                isLoading = false
+            }
+        }
     }
 
     fun addNewPictures(uriList: List<Uri>) {
         imageList.addAll(
             uriList.map { ImageWrapper(it) }
         )
-        hasChanges = true
+        viewModelScope.launch {
+            preset?.id?.let { id ->
+                isLoading = true
+                presetInteractor.saveImagesToLocalStorage(id, uriList)
+                isLoading = false
+            }
+        }
     }
 
     private fun getPreset(presetId: Long) {

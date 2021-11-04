@@ -15,4 +15,10 @@ interface PresetInteractor {
     suspend fun updatePreset(preset: Preset, newImages: List<Uri>)
 
     suspend fun deletePreset(preset: Preset)
+
+    suspend fun saveImagesToLocalStorage(presetId: Long, imageList: List<Uri>)
+
+    suspend fun saveImageToLocalStorage(presetId: Long, image: Uri)
+
+    suspend fun deleteImages(presetId: Long, imageList: List<Uri>)
 }

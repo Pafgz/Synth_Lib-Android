@@ -8,6 +8,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.paf.synthlib.utils.createTempFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -15,8 +16,6 @@ import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-
-val EMPTY_IMAGE_URI: Uri = Uri.parse("file://dev/null")
 
 suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
     ProcessCameraProvider.getInstance(this).also { future ->
@@ -30,14 +29,7 @@ val Context.executor: Executor
     get() = ContextCompat.getMainExecutor(this)
 
 suspend fun ImageCapture.takePicture(executor: Executor): File {
-    val photoFile = withContext(Dispatchers.IO) {
-        kotlin.runCatching {
-            File.createTempFile("image", ".jpg")
-        }.getOrElse { ex ->
-            Log.e("TakePicture", "Failed to create temporary file", ex)
-            File("/dev/null")
-        }
-    }
+    val photoFile = createTempFile("image", ".jpg")
 
     return suspendCoroutine { continuation ->
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()

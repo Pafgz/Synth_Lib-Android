@@ -251,7 +251,7 @@ fun ImageListView(imageList: List<Uri>, onClickImage: (Uri) -> Unit) {
             Spacer(Modifier.size(16.dp))
         }
 
-        itemsIndexed(imageList) { i, image ->
+        itemsIndexed(imageList) { i, imageUri ->
             Box(
                 modifier = Modifier
                     .padding(
@@ -259,12 +259,12 @@ fun ImageListView(imageList: List<Uri>, onClickImage: (Uri) -> Unit) {
                     )
                     .clip(shape = RoundedCornerShape(16.dp))
                     .background(color = LightGrey)
-                    .clickable { onClickImage(image) }
+                    .clickable { onClickImage(imageUri) }
                     .size(230.dp)
             ) {
 
                 Image(
-                    painter = rememberImagePainter(image),
+                    painter = rememberImagePainter(imageUri),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
