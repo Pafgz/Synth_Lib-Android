@@ -13,7 +13,7 @@ interface PresetDao {
 
     @Transaction
     @Query("SELECT * FROM preset_table WHERE id = :id ORDER BY id DESC")
-    fun getPreset(id: Int) : Flow<PresetEntity>
+    fun getPreset(id: Long) : Flow<PresetEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPreset(preset: PresetEntity): Long
@@ -22,5 +22,5 @@ interface PresetDao {
     suspend fun updatePreset(preset: PresetEntity)
 
     @Query("DELETE FROM preset_table WHERE id = :id")
-    suspend fun deletePreset(id: Int)
+    suspend fun deletePreset(id: Long)
 }

@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paf.synthlib.domain.preset.PresetInteractor
 import com.paf.synthlib.domain.preset.model.Preset
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.*
+import java.io.File
 import kotlin.random.Random
 
 class PresetDetailsVm : ViewModel(), KoinComponent {
@@ -24,34 +25,44 @@ class PresetDetailsVm : ViewModel(), KoinComponent {
 
     var hasChanges by mutableStateOf(false)
 
-    var isNewPreset = true
+    private var isNewPreset = true
 
-    fun init(inputPreset: Preset?) {
-        preset = inputPreset?.let {
+    var isLoading by mutableStateOf(true)
+
+    fun init(presetId: Long) {
+        isLoading = true
+        if (presetId >= 0) {
             isNewPreset = false
-            it
-        } ?: getNewPreset()
+            getPreset(presetId)
+        } else {
+            preset = getNewPreset()
+            isLoading = false
+        }
     }
 
     fun save() {
-        preset?.let {
+        preset?.let { presetToSave ->
+            isLoading = true
             viewModelScope.launch {
-                if(isNewPreset) {
-                    presetInteractor.savePreset(it)
+                if (isNewPreset) {
+                    val presetId = presetInteractor.savePreset(presetToSave, getUnsavedImageUris())
+                    isNewPreset = false
+                    hasChanges = false
+                    presetInteractor.getPreset(presetId).collect {
+                        preset = it
+                    }
                 } else {
-                    presetInteractor.updatePreset(it)
+                    presetInteractor.updatePreset(presetToSave, getUnsavedImageUris())
+                    hasChanges = false
+                    isLoading = false
                 }
-
-                isNewPreset = false
             }
         }
     }
 
     fun updatePresetName(newName: String) {
-        if (newName.isNotBlank()) {
-            preset = preset?.copy(name = newName)
-            hasChanges = true
-        }
+        preset = preset?.copy(name = newName)
+        hasChanges = newName.isNotBlank()
     }
 
     fun addNewPicture(imageUri: Uri) {
@@ -66,11 +77,22 @@ class PresetDetailsVm : ViewModel(), KoinComponent {
         hasChanges = true
     }
 
+    private fun getPreset(presetId: Long) {
+        viewModelScope.launch {
+            presetInteractor.getPreset(presetId).collect {
+                preset = it
+                isLoading = false
+            }
+        }
+    }
+
     private fun getNewPreset() = Preset(
         id = 0,
         name = "Preset" + Random.nextInt(999999),
         hasDemo = false
     )
+
+    private fun getUnsavedImageUris() = imageList.filter { !it.isSaved }.map { it.uri }
 
     data class ImageWrapper(
         val uri: Uri,

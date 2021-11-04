@@ -1,7 +1,7 @@
 package com.paf.synthlib.di
 
 import android.app.Application
-import androidx.room.Room
+import android.content.Context
 import com.paf.synthlib.domain.preset.PresetInteractor
 import com.paf.synthlib.domain.preset.PresetRepository
 import com.paf.synthlib.implementation.database.AppDatabase
@@ -9,18 +9,20 @@ import com.paf.synthlib.implementation.database.preset.PresetDao
 import com.paf.synthlib.implementation.database.preset.TagDao
 import com.paf.synthlib.implementation.preset.PresetInteractorImpl
 import com.paf.synthlib.implementation.preset.PresetRepositoryImpl
+import com.paf.synthlib.utils.FileManager
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 
 val presetModule = module {
-    fun providePresetRepository(presetDao: PresetDao): PresetRepository =
-        PresetRepositoryImpl(presetDao)
+    fun providePresetRepository(presetDao: PresetDao, fileManager: FileManager): PresetRepository =
+        PresetRepositoryImpl(presetDao, fileManager)
 
     fun providePresetInteractor(presetRepository: PresetRepository): PresetInteractor =
         PresetInteractorImpl(presetRepository)
 
-    single { providePresetRepository(get()) }
+    single { providePresetRepository(get(), get()) }
 
     single { providePresetInteractor(get()) }
 }
@@ -38,4 +40,10 @@ val dbModule = module {
     single { providePresetDao(get()) }
 
     single { provideTagDao(get()) }
+}
+
+val storageModule = module {
+    fun provideFileManager(context: Context): FileManager = FileManager(context)
+
+    single { provideFileManager(androidContext()) }
 }

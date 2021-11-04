@@ -8,7 +8,7 @@ import com.paf.synthlib.domain.preset.model.Tag
 @Entity(tableName = "tag_table")
 data class TagEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val name: String
 )
 

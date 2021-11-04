@@ -14,15 +14,16 @@ import androidx.compose.ui.unit.dp
 import com.paf.synthlib.common.views.ClickableIcon
 import com.paf.synthlib.domain.preset.model.Preset
 import com.paf.synthlib.preset.PresetListScreen
+import com.paf.synthlib.ui.theme.DarkGrey
 import com.paf.synthlib.ui.theme.SynthLibTheme
 
 @Composable
-fun HomeScreen(onClickPreset: (Preset?) -> Unit) {
+fun HomeScreen(onClickPreset: (Long?) -> Unit) {
     Scaffold(
         topBar = {
-            HomeTopBar(onClickNewPreset = onClickPreset)
+            HomeTopBar(onClickNewPreset = { onClickPreset(null) })
         }) {
-        PresetListScreen(openPreset = onClickPreset)
+        PresetListScreen(openPreset = { onClickPreset(it?.id) })
     }
 }
 
@@ -36,8 +37,10 @@ fun HomeScreenPreview() {
 
 @Composable
 fun HomeTopBar(onClickNewPreset: (Preset?) -> Unit) {
-    TopAppBar {
-        Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f).fillMaxHeight()) {
+    TopAppBar(backgroundColor = DarkGrey) {
+        Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()) {
             ClickableIcon(
                 drawable = R.drawable.ic_add,
                 onClick = { onClickNewPreset(null) },

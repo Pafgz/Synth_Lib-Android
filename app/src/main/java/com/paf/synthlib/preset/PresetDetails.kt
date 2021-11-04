@@ -4,6 +4,7 @@ package com.paf.synthlib.preset
 import android.net.Uri
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -12,10 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,15 +48,15 @@ import kotlinx.coroutines.launch
 @ExperimentalPermissionsApi
 @ExperimentalMaterialApi
 @Composable
-fun PresetDetailsScreen(preset: Preset?) {
+fun PresetDetailsScreen(presetId: Long) {
 
     val vm: PresetDetailsVm = viewModel()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
     var screenState by remember { mutableStateOf(PresetScreenState.Details) }
 
-    LaunchedEffect(preset) {
-        vm.init(preset)
+    LaunchedEffect(presetId) {
+        vm.init(presetId)
     }
 
     Crossfade(screenState) {
@@ -113,7 +118,12 @@ fun PresetDetailsView(
     onClickAddDemo: () -> Unit,
     onSave: () -> Unit
 ) {
-    Column {
+    val focusManager = LocalFocusManager.current
+    Column(modifier = Modifier.pointerInput(Unit) {
+        detectTapGestures(onTap = {
+            focusManager.clearFocus()
+        })
+    }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.height(46.dp).fillMaxWidth()
@@ -125,7 +135,10 @@ fun PresetDetailsView(
                     modifier = Modifier.clickableArea(
                         clickAreaShape = RoundedCornerShape(4.dp),
                         clickAreaSize = 8.dp
-                    ) { onSave() },
+                    ) {
+                        focusManager.clearFocus()
+                        onSave()
+                      },
                     color = Color.White,
                     fontSize = 16.sp
                 )

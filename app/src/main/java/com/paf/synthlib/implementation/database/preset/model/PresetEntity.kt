@@ -10,7 +10,7 @@ import com.paf.synthlib.domain.preset.model.Preset
 data class PresetEntity(
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    val id: Int = 0,
+    val id: Long = 0,
     val name: String
 )
 

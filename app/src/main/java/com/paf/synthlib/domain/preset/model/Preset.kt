@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Preset(
-    val id: Int,
+    val id: Long,
     val name: String,
     val hasDemo: Boolean,
     val tagList: List<Tag> = listOf(),

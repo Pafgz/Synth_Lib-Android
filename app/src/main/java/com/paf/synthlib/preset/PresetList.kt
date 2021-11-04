@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paf.synthlib.R
+import com.paf.synthlib.common.views.LoadingView
 import com.paf.synthlib.domain.preset.model.Preset
+import com.paf.synthlib.preset.PresetListVm.PresetListState.*
 import com.paf.synthlib.ui.theme.LightGrey
 import com.paf.synthlib.ui.theme.Orange
 import com.paf.synthlib.ui.theme.SynthLibTheme
@@ -33,15 +35,15 @@ fun PresetListScreen(openPreset: (Preset?) -> Unit) {
     val vm: PresetListVm = viewModel()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Crossfade(vm.presetList.isEmpty()) { isEmpty ->
-            if (isEmpty) {
-                PresetListEmptyView {
+        Crossfade(vm.state) { state ->
+            when(state) {
+                Empty -> PresetListEmptyView {
                     openPreset(null)
                 }
-            } else {
-                PresetListView(vm.presetList) {
+                List -> PresetListView(vm.presetList) {
                     openPreset(it)
                 }
+                Loading -> LoadingView(modifier = Modifier.fillMaxSize())
             }
         }
     }

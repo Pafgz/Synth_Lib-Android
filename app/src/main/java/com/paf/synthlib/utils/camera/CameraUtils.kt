@@ -1,6 +1,7 @@
 package com.paf.synthlib.utils.camera
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageCapture
@@ -31,7 +32,7 @@ val Context.executor: Executor
 suspend fun ImageCapture.takePicture(executor: Executor): File {
     val photoFile = withContext(Dispatchers.IO) {
         kotlin.runCatching {
-            File.createTempFile("image", "jpg")
+            File.createTempFile("image", ".jpg")
         }.getOrElse { ex ->
             Log.e("TakePicture", "Failed to create temporary file", ex)
             File("/dev/null")

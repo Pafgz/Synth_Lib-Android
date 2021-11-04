@@ -15,13 +15,13 @@ interface TagDao {
 
     @Transaction
     @Query("SELECT * FROM tag_table WHERE id = :id ORDER BY id DESC")
-    fun getPreset(id: Long) : Flow<PresetEntity>
+    fun getTag(id: Long) : Flow<PresetEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addPreset(preset: PresetEntity): Long
+    suspend fun addTag(preset: PresetEntity): Long
 
     @Query("UPDATE tag_table SET name =:updateName where id=:id")
-    suspend fun updatePreset(id: Long, updateName: String)
+    suspend fun updateTag(id: Long, updateName: String)
 
     @Query("DELETE FROM tag_table WHERE id = :id")
     suspend fun deletePreset(id: Long)

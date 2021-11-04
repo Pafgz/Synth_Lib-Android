@@ -1,5 +1,8 @@
 package com.paf.synthlib.preset
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paf.synthlib.domain.preset.PresetInteractor
@@ -13,13 +16,22 @@ class PresetListVm : ViewModel(), KoinComponent {
 
     private val presetInteractor: PresetInteractor by inject()
 
-    val presetList = mutableListOf<Preset>()
+    var presetList by mutableStateOf<List<Preset>>(listOf())
+
+    var state by mutableStateOf(PresetListState.Loading)
 
     init {
         viewModelScope.launch {
+            state = PresetListState.Loading
             presetInteractor.getAllPresets().collect {
-                presetList.addAll(it)
+                presetList = it
+
+                state = if(presetList.isEmpty()) PresetListState.Empty else PresetListState.List
             }
         }
+    }
+
+    enum class PresetListState {
+        Empty, List, Loading
     }
 }

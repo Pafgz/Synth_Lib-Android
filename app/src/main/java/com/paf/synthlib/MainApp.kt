@@ -3,6 +3,7 @@ package com.paf.synthlib
 import android.app.Application
 import com.paf.synthlib.di.dbModule
 import com.paf.synthlib.di.presetModule
+import com.paf.synthlib.di.storageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -15,7 +16,7 @@ class MainApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MainApp)
-            modules(dbModule, presetModule)
+            modules(dbModule, presetModule, storageModule)
         }
     }
 }
